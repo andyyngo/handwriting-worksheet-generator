@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Practice Worksheet Generator</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* Custom Font - It's important to have a handwriting font */
+        @font-face {
+            font-family: 'KGPrimaryDots';
+            src: url('public/KgPrimaryDots-Pl0E.ttf') format('truetype');
+        }
+
+        .font-handwriting {
+            font-family: 'KGPrimaryDots', sans-serif;
+        }
+        
+        /* Style for the preview area to mimic a worksheet */
+        #preview-content {
+            background-color: white;
+            line-height: 3; /* Default line height */
+            /* Global settings for line positions (extracted from linear gradients) */
+            --topline-position: 17%;
+            --midline-position: 43%;
+            --baseline-position: 73%;
+            --descender-position: 88%;
+            
+            background-image:
+                /* Line 1: Topline (continuous, blue) */
+                linear-gradient(to bottom, transparent var(--topline-position), #d1eaff var(--topline-position), #d1eaff calc(var(--topline-position) + 2px), transparent calc(var(--topline-position) + 2px)),
+                /* Line 2: Midline (dotted/light grey) */
+                linear-gradient(to bottom, transparent var(--midline-position), #e0e0e0 var(--midline-position), #e0e0e0 calc(var(--midline-position) + 1px), transparent calc(var(--midline-position) + 1px)),
+                /* Line 3: Baseline (continuous, blue) */
+                linear-gradient(to bottom, transparent var(--baseline-position), #d1eaff var(--baseline-position), #d1eaff calc(var(--baseline-position) + 2px), transparent calc(var(--baseline-position) + 2px)),
+                /* Line 4: Descender line (dotted/light grey) */
+                linear-gradient(to bottom, transparent var(--descender-position), #e0e0e0 var(--descender-position), #e0e0e0 calc(var(--descender-position) + 1px), transparent calc(var(--descender-position) + 1px));
+
+            background-size: 100% 3em; /* Corresponds to line-height, updated by JS */
+            padding: 0rem 2rem 0rem 2rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            overflow-wrap: normal;
+            word-wrap: normal;
+            hyphens: none;
+            
+            /* UPDATED: This makes the div respect newline characters from the input */
+            white-space: pre-wrap;        
+        }
+    </style>
+  </head>
+  <body class="bg-gray-100 font-sans antialiased">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">Handwriting Practice Worksheet Generator</h1>
+            <p class="text-lg text-gray-600 mt-2">Create and print custom worksheets for handwriting practice. ✍️</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- CONTROLS SECTION -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Controls</h2>
+                
+                <!-- Text to Practice -->
+                <div class="mb-6">
+                    <label for="text-input" class="block text-sm font-medium text-gray-700 mb-1">Text to Practice</label>
+                    <textarea id="text-input" rows="5" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="Enter your text here...">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</textarea>
+                </div>
+
+                <!-- Font Size -->
+                <div class="mb-6">
+                    <label for="font-size-slider" class="block text-sm font-medium text-gray-700">Font Size: <span id="font-size-value">36</span>pt</label>
+                    <input id="font-size-slider" type="range" min="14" max="72" value="36" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                
+                <!-- Generate Button -->
+                <div class="mt-8">
+                    <button id="generate-pdf-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-transform transform hover:scale-105">
+                        Generate &amp; Download PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- PREVIEW SECTION -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-700">Live Preview</h2>
+                <div class="bg-gray-50 rounded-lg p-4 flex justify-center">
+                    <!-- UPDATED: Added container with letter proportions -->
+                    <div class="w-[860px] flex items-center justify-center">
+                        <div id="preview-content" class="font-handwriting w-full h-full overflow-auto">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>&copy; 2025 Handwriting Generator. Built with love for Tri Ngo.</p>
+        </footer>
+    </div>
+    <script>
+        const { jsPDF } = window.jspdf;
+    </script>
+
+    <!-- Load the font module -->
+    <script src="./src/KgPrimaryDots-Pl0E-normal.js" type="module"></script>
+
+    <!-- Load the main application script -->
+    <script src="./src/main.ts" type="module"></script>
+  </body>  
+</html>
