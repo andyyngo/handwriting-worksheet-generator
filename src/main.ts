@@ -6,7 +6,6 @@ import { jsPDF } from 'jspdf';
 document.addEventListener('DOMContentLoaded', () => {
     (function () {
         // Get references to all the UI elements
-        const textInput = document.getElementById('text-input') as HTMLTextAreaElement;
         const fontSizeSlider = document.getElementById('font-size-slider') as HTMLInputElement;
         const fontSizeValue = document.getElementById('font-size-value') as HTMLSpanElement;
         const generatePdfBtn = document.getElementById('generate-pdf-btn') as HTMLButtonElement;
@@ -14,16 +13,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Application state
         const state = {
-            text: textInput?.value,
+            text: previewContent?.textContent || '',
             fontSize: parseInt(fontSizeSlider?.value, 10),
             fontColor: '#374151',
         };
 
         // --- EVENT LISTENERS ---
 
-        textInput.addEventListener('input', (e: Event) => {
-            state.text = (e.target as HTMLTextAreaElement).value;
-            updatePreview();
+        previewContent.addEventListener('input', (e: Event) => {
+            state.text = (e.target as HTMLDivElement).textContent || '';
         });
 
         fontSizeSlider.addEventListener('input', (e: Event) => {
@@ -40,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
          * Updates the live preview area based on the current state.
          */
         function updatePreview(): void {
-            previewContent.textContent = state.text;
             const lineHeight = state.fontSize * 1.5;
             previewContent.style.fontSize = `${state.fontSize}pt`;
             previewContent.style.color = state.fontColor;
@@ -52,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
          * Generates a PDF worksheet using jsPDF.
          */
         async function generatePDF(): Promise<void> {
+            // Update state with current text content
+            state.text = previewContent.textContent || '';
+            
             const doc = new jsPDF({
                 unit: 'pt',
                 format: 'letter'
