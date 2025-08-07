@@ -1,4 +1,4 @@
-// Import jsPDF
+import './KgPrimaryDots-Pl0E-normal.js';
 import { jsPDF } from 'jspdf';
 
 
