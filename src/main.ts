@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         generatePdfBtn.addEventListener('click', generatePDF);
 
+        // Intercept print commands (Ctrl+P or browser menu)
+        window.addEventListener('beforeprint', (e) => {
+            e.preventDefault();
+            generatePDF();
+        });
+
         // --- CORE FUNCTIONS ---
 
         /**
@@ -120,7 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Open PDF in a new window instead of saving to file system
             const pdfData = doc.output('bloburl');
-            window.open(pdfData, '_blank');
+            // Close any existing print window and open new PDF
+            window.open(pdfData, '_blank')?.focus();
         }
 
         // Initialize the font size display
