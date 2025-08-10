@@ -1,5 +1,8 @@
 {
   "name": "handwriting-worksheet-generator-site",
-  "main": "index.html",
-  "compatibility_date": "2025-08-10"
+  "compatibility_date": "2025-08-10",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS"
+  }
 }
