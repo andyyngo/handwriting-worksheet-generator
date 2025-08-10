@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+
+/* Custom Font - It's important to have a handwriting font */
+        @font-face {
+            font-family: 'KGPrimaryDots';
+            src: url('KgPrimaryDots-Pl0E.ttf') format('truetype');
+        }
+
+        .font-handwriting {
+            font-family: 'KGPrimaryDots', sans-serif;
+        }
+
+/* Style for the preview area to mimic a worksheet */
+#preview-content {
+    background-color: white;
+    line-height: 3;
+    /* Default line height */
+    /* Global settings for line positions (extracted from linear gradients) */
+    --topline-position: 17%;
+    --midline-position: 43%;
+    --baseline-position: 73%;
+    --descender-position: 88%;
+
+    background-image:
+        /* Line 1: Topline (continuous, blue) */
+        linear-gradient(to bottom, transparent var(--topline-position), #d1eaff var(--topline-position), #d1eaff calc(var(--topline-position) + 2px), transparent calc(var(--topline-position) + 2px)),
+        /* Line 2: Midline (dotted/light grey) */
+        linear-gradient(to bottom, transparent var(--midline-position), #e0e0e0 var(--midline-position), #e0e0e0 calc(var(--midline-position) + 1px), transparent calc(var(--midline-position) + 1px)),
+        /* Line 3: Baseline (continuous, blue) */
+        linear-gradient(to bottom, transparent var(--baseline-position), #d1eaff var(--baseline-position), #d1eaff calc(var(--baseline-position) + 2px), transparent calc(var(--baseline-position) + 2px)),
+        /* Line 4: Descender line (dotted/light grey) */
+        linear-gradient(to bottom, transparent var(--descender-position), #e0e0e0 var(--descender-position), #e0e0e0 calc(var(--descender-position) + 1px), transparent calc(var(--descender-position) + 1px));
+    background-size: 100% 3em;
+    /* Corresponds to line-height, updated by JS */
+    padding: 0rem 2rem 0rem 2rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    hyphens: none;
+
+    /* UPDATED: This makes the div respect newline characters from the input */
+    white-space: pre-wrap;
+
+    /* Make the preview editable */
+    outline: none;
+    min-height: 300px;
+}
